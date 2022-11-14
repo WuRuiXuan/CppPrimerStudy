@@ -12,6 +12,8 @@ class Window_mgr {
         using ScreenIndex = vector<Screen>::size_type;
         // 按照编号将指定的 Screen 重置为空白
         void clear(ScreenIndex);
+        // 向窗口添加一个 Screen，返回它的编号
+        ScreenIndex addScreen(const Screen&);
     private:
         // 这个 Window_mgr 追踪的 Screen
         // 默认情况下，一个 Window_mgr 包含一个标准尺寸的空白 Screen
@@ -45,6 +47,7 @@ class Screen {
                     { do_display(os); return *this; }
         const Screen &display(ostream &os) const
                     { do_display(os); return *this; }
+        pos size() const;
     private:
         pos cursor = 0;
         pos height = 0, width = 0;
@@ -89,12 +92,23 @@ inline Screen &Screen::set(pos r, pos col, char ch)
 extern ostream& storeOn(ostream &, Screen &);
 // extern BitMap& storeOn(BitMap &, Screen &);
 
+Screen::pos Screen::size() const
+{
+    return height * width;
+}
+
 void Window_mgr::clear(ScreenIndex i)
 {
     // s 是一个 Screen 的引用，指向我们想清空的那个屏幕
     Screen &s = screens[i];
     // 将那个选定的 Screen 重置为空白
     s.contents = string(s.height * s.width, ' ');
+}
+
+Window_mgr::ScreenIndex Window_mgr::addScreen(const Screen &s)
+{
+    screens.push_back(s);
+    return screens.size() - 1;
 }
 
 int main()
