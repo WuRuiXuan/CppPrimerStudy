@@ -19,20 +19,29 @@ class HasPtr {
     private:
         string *ps;
         int i;
+        size_t *use;    // 用来记录有多少个对象共享 *ps 的成员
 };
 
-HasPtr::HasPtr(const string& str): 
-            ps(new string(str)), i(0) {}
+// 构造函数分配新的 string 和新的计数器，将计数器置为1
+HasPtr::HasPtr(const string& s): 
+            ps(new string(s)), i(0), use(new size_t(1)) {}
 
 // 指针行为的拷贝构造函数
-HasPtr::HasPtr(const HasPtr& htr): ps(htr.ps), i(0) {}
+// 拷贝构造函数拷贝所有三个数据成员，并递增计数器
+HasPtr::HasPtr(const HasPtr& p): ps(p.ps), i(p.i), use(p.use) { ++*use; }
 
 // 指针行为的拷贝赋值运算符
-inline HasPtr& HasPtr::operator=(const HasPtr& htr)
+inline HasPtr& HasPtr::operator=(const HasPtr& rhs)
 {
-    ps = htr.ps;
-    i = htr.i;
-    return *this;
+    ++*rhs.use;         // 递增右侧运算对象的引用计数
+    if (--*use == 0) {  // 然后递减本对象的引用计数
+        delete ps;      // 如果没有其他用户
+        delete use;     // 释放本对象分配的成员
+    }
+    ps = rhs.ps;        // 将数据从 rhs 拷贝到本对象
+    i = rhs.i;
+    use = rhs.use;
+    return *this;       // 返回本对象
 }
 
 // 指针行为的拷贝赋值运算符
@@ -47,7 +56,13 @@ inline string& HasPtr::operator*()
     return *ps;
 }
 
-inline HasPtr::~HasPtr() { delete ps; }
+inline HasPtr::~HasPtr()
+{
+    if (--*use == 0) {      // 如果引用计数变为0
+        delete ps;          // 释放 string 内存
+        delete use;         // 释放计数器内存
+    }
+}
 
 int main()
 {

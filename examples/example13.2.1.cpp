@@ -20,18 +20,18 @@ class HasPtr {
         int i;
 };
 
-HasPtr::HasPtr(const string& str): ps(new string(str)), i(0) {}
+HasPtr::HasPtr(const string& s): ps(new string(s)), i(0) {}
 
 // 值行为的拷贝构造函数
-HasPtr::HasPtr(const HasPtr& htr): ps(new string(*htr.ps)), i(0) {}
+HasPtr::HasPtr(const HasPtr& p): ps(new string(*p.ps)), i(p.i) {}
 
 // 值行为的拷贝赋值运算符
-inline HasPtr& HasPtr::operator=(const HasPtr& htr)
+inline HasPtr& HasPtr::operator=(const HasPtr& rhs)
 {
-    auto newps = new string(*htr.ps);
+    auto newps = new string(*rhs.ps);
     delete ps;
     ps = newps;
-    i = htr.i;
+    i = rhs.i;
     return *this;
 }
 
