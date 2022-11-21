@@ -109,5 +109,5 @@ ostream &print(ostream& os, const QueryResult &qr)
 int main()
 {
     ifstream ifs("../resources/storyDataFile");
-    runQueries(ifs);
+    runQueries(ifs);    // 将句子拆成单词保存时，单词会带上连着的标点符号
 }
