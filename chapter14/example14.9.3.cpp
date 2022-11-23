@@ -1,3 +1,4 @@
+#include <iostream>
 
 class SmallInt {
     // 既提供了重载运算符
