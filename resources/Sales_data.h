@@ -33,7 +33,9 @@
 #include <string>
 #include <iostream>
 
+// unchanged from chapter 14 except for added friend declaration for hash
 class Sales_data {
+friend class std::hash<Sales_data>;
 friend std::ostream &operator<<
                          (std::ostream&, const Sales_data&);
 friend std::istream &operator>>(std::istream&, Sales_data&);
@@ -41,7 +43,6 @@ friend bool operator==(const Sales_data &, const Sales_data &);
 
 friend std::ostream &print(std::ostream&, const Sales_data&);
 friend std::istream &read(std::istream&, Sales_data&);
-
 public:
 	// constructors
 	Sales_data() = default;
@@ -49,7 +50,6 @@ public:
 	Sales_data(const std::string &s, unsigned n, double p):
 	           bookNo(s), units_sold(n), revenue(p*n) { }
 	Sales_data(std::istream &);
-
 	std::string isbn() const { return bookNo; }
 	Sales_data& operator+=(const Sales_data&);
 private:
@@ -77,12 +77,9 @@ bool operator!=(const Sales_data &lhs, const Sales_data &rhs)
 	return !(lhs == rhs);
 }
 
-// old versions
 Sales_data add(const Sales_data&, const Sales_data&);
 std::ostream &print(std::ostream&, const Sales_data&);
 std::istream &read(std::istream&, Sales_data&);
-
-// new operator functions
 Sales_data operator+(const Sales_data&, const Sales_data&);
 std::ostream &operator<<(std::ostream&, const Sales_data&);
 std::istream &operator>>(std::istream&, Sales_data&);
